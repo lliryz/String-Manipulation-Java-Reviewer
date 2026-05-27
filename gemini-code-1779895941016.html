@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Strings Reviewer</title>
+    <style>
+        /* Base Variables and Theme */
+        :root {
+            --bg-dark: #121212;
+            --bg-panel: #1e1e1e;
+            --bg-card: #2d2d2d;
+            --text-main: #e0e0e0;
+            --text-muted: #9e9e9e;
+            --accent: #bb86fc;
+            --accent-hover: #9965f4;
+            --border: #333;
+            --code-bg: #282a36;
+            --code-keyword: #ff79c6;
+            --code-string: #f1fa8c;
+            --code-comment: #6272a4;
+            --code-type: #8be9fd;
+            --success: #03dac6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Sidebar Navigation / Mobile Header */
+        nav {
+            width: 280px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .nav-header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h2 {
+            color: var(--accent);
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        #menu-toggle {
+            display: none;
+            background: rgba(187, 134, 252, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        #menu-toggle:active {
+            background: var(--accent);
+            color: var(--bg-dark);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0 20px 20px 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        nav ul li {
+            margin-bottom: 8px;
+        }
+
+        nav ul li a {
+            color: var(--text-main);
+            text-decoration: none;
+            display: block;
+            padding: 10px 12px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        nav ul li a:hover {
+            background-color: var(--bg-card);
+            color: var(--accent);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px;
+            max-width: 1000px;
+        }
+
+        section {
+            background-color: var(--bg-panel);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            scroll-margin-top: 20px; /* Offset for anchor links */
+        }
+
+        h2.section-title {
+            color: var(--accent);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        h3 {
+            color: var(--text-main);
+            margin: 20px 0 10px 0;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        /* Callouts and Key Rules */
+        .alert {
+            background-color: rgba(187, 134, 252, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .alert-important {
+            background-color: rgba(243, 139, 168, 0.1);
+            border-left: 4px solid #f38ba8;
+        }
+
+        /* Tables & Responsive Wrapper */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 15px 0;
+            border-radius: 4px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 400px; /* Prevents extreme squishing on mobile */
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: var(--code-bg);
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 15px 0;
+            border: 1px solid var(--border);
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95rem;
+        }
+
+        .kw { color: var(--code-keyword); }
+        .str { color: var(--code-string); }
+        .cmt { color: var(--code-comment); }
+        .typ { color: var(--code-type); }
+
+        code.inline {
+            background-color: var(--bg-card);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--success);
+            font-family: 'Consolas', monospace;
+            white-space: nowrap;
+        }
+
+        /* Practice Problems */
+        .problem-box {
+            background-color: #1a2634;
+            border: 1px solid #2a3f54;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+
+        .problem-title {
+            color: #82aaff;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-reveal {
+            background-color: #82aaff;
+            color: #000;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: opacity 0.2s;
+            width: 100%; /* Full width on mobile */
+            max-width: 200px;
+        }
+
+        .btn-reveal:hover {
+            opacity: 0.8;
+        }
+
+        .solution-box {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #2a3f54;
+        }
+
+        /* =========================================
+           📱 MOBILE RESPONSIVE DESIGN (Phones & Tablets)
+           ========================================= */
+        @media (max-width: 768px) {
+            body { 
+                flex-direction: column; 
+            }
+            
+            /* Make Navigation a Sticky Header */
+            nav {
+                width: 100%;
+                height: auto;
+                position: sticky;
+                top: 0;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            }
+
+            .nav-header {
+                padding: 15px 20px;
+            }
+
+            nav h2 {
+                font-size: 1.3rem;
+            }
+
+            #menu-toggle {
+                display: block; /* Show hamburger button */
+            }
+
+            /* Hide menu links by default on mobile */
+            nav ul {
+                display: none; 
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: var(--bg-panel);
+                border-bottom: 1px solid var(--border);
+                padding: 10px 20px 20px 20px;
+                max-height: 60vh; /* Don't cover entire screen if too long */
+                box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            }
+
+            nav ul.show {
+                display: block;
+            }
+
+            /* Adjust Main Content for Mobile */
+            main {
+                margin-left: 0;
+                padding: 20px 15px;
+            }
+
+            section {
+                padding: 20px 15px;
+                scroll-margin-top: 80px; /* Offset for sticky header when scrolling */
+            }
+
+            h2.section-title {
+                font-size: 1.25rem;
+            }
+
+            /* Adjust text and padding for smaller screens */
+            th, td {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+
+            pre {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+
+            .btn-reveal {
+                max-width: 100%; /* Make buttons full width on very small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-header">
+            <h2>☕ Java Strings</h2>
+            <button id="menu-toggle">☰ Menu</button>
+        </div>
+        <ul id="nav-links">
+            <li><a href="#sec-1">1. Fundamentals</a></li>
+            <li><a href="#sec-2">2. Basic Operations</a></li>
+            <li><a href="#sec-3">3. Searching</a></li>
+            <li><a href="#sec-4">4. Comparison</a></li>
+            <li><a href="#sec-5">5. Modification</a></li>
+            <li><a href="#sec-6">6. Tokenization</a></li>
+            <li><a href="#sec-7">7. Delimiters</a></li>
+            <li><a href="#sec-8">8. Regex</a></li>
+            <li><a href="#sec-9">9. Replace</a></li>
+            <li><a href="#sec-10">10. Combined Patterns</a></li>
+            <li><a href="#sec-11">11. Key Takeaways</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="sec-1">
+            <h2 class="section-title">1. 🔹 String Fundamentals</h2>
+            <p>Strings in Java are objects that represent sequences of characters.</p>
+            
+            <h3>Declaration</h3>
+<pre><code><span class="typ">String</span> s1 = <span class="str">"hello"</span>;
+<span class="typ">String</span> s2 = <span class="kw">new</span> <span class="typ">String</span>(<span class="str">"hello"</span>);</code></pre>
+
+            <div class="alert alert-important">
+                <strong>Key Property: Strings are immutable.</strong><br>
+                Any modification creates a new object in memory rather than altering the existing one.
+            </div>
+
+            <div class="problem-box">
+                <div class="problem-title">💡 Practice Problem</div>
+                <p>What happens to the original string <code>s1</code> after executing: <code>s1.toUpperCase();</code>?</p>
+                <button class="btn-reveal" onclick="toggleSolution('sol-1', this)">Show Answer</button>
+                <div class="solution-box" id="sol-1">
+                    <p>Nothing. Because strings are immutable, the original <code>s1</code> remains unchanged. To capture the uppercase version, you must assign it to a variable: <code>s1 = s1.toUpperCase();</code></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-2">
+            <h2 class="section-title">2. 🔹 Basic Operations</h2>
+            
+            <h3>Length and Characters</h3>
+<pre><code><span class="typ">String</span> s = <span class="str">"hello"</span>;
+
+s.length();      <span class="cmt">// 5</span>
+s.charAt(<span class="kw">1</span>);     <span class="cmt">// 'e' (Zero-based indexing)</span></code></pre>
+
+            <h3>Substring</h3>
+            <p>Remember that the <strong>end index is exclusive</strong>.</p>
+<pre><code><span class="typ">String</span> s = <span class="str">"programming"</span>;
+
+s.substring(<span class="kw">0</span>, <span class="kw">4</span>);   <span class="cmt">// "prog"</span>
+s.substring(<span class="kw">4</span>);      <span class="cmt">// "ramming"</span></code></pre>
+
+            <div class="problem-box">
+                <div class="problem-title">💡 Practice Problem</div>
+                <p>Write code to extract the word <code>"gram"</code> from the string <code>"programming"</code>.</p>
+                <button class="btn-reveal" onclick="toggleSolution('sol-2', this)">Show Answer</button>
+                <div class="solution-box" id="sol-2">
+<pre><code><span class="typ">String</span> s = <span class="str">"programming"</span>;
+<span class="typ">String</span> result = s.substring(<span class="kw">3</span>, <span class="kw">7</span>);
+System.out.println(result); <span class="cmt">// Prints "gram"</span></code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-3">
+            <h2 class="section-title">3. 🔹 Searching in Strings</h2>
+            <div class="table-responsive">
+                <table>
+                    <tr>
+                        <th>Method</th>
+                        <th>Purpose</th>
+                    </tr>
+                    <tr>
+                        <td><code class="inline">indexOf()</code></td>
+                        <td>Returns the index of the first occurrence</td>
+                    </tr>
+                    <tr>
+                        <td><code class="inline">lastIndexOf()</code></td>
+                        <td>Returns the index of the last occurrence</td>
+                    </tr>
+                    <tr>
+                        <td><code class="inline">contains()</code></td>
+                        <td>Checks existence (returns boolean)</td>
+                    </tr>
+                </table>
+            </div>
+
+<pre><code><span class="typ">String</span> s = <span class="str">"banana"</span>;
+
+s.indexOf(<span class="str">"a"</span>);      <span class="cmt">// 1</span>
+s.contains(<span class="str">"nan"</span>);   <span class="cmt">// true</span></code></pre>
+
+            <div class="problem-box">
+                <div class="problem-title">💡 Practice Problem</div>
+                <p>How do you find the index of the <em>second</em> occurrence of the letter "a" in "banana"?</p>
+                <button class="btn-reveal" onclick="toggleSolution('sol-3', this)">Show Answer</button>
+                <div class="solution-box" id="sol-3">
+                    <p>Use the overloaded version of <code>indexOf</code> that takes a starting position.</p>
+<pre><code><span class="typ">String</span> s = <span class="str">"banana"</span>;
+<span class="kw">int</span> firstA = s.indexOf(<span class="str">"a"</span>); <span class="cmt">// 1</span>
+<span class="kw">int</span> secondA = s.indexOf(<span class="str">"a"</span>, firstA + <span class="kw">1</span>); <span class="cmt">// 3</span></code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-4">
+            <h2 class="section-title">4. 🔹 String Comparison</h2>
+            <div class="table-responsive">
+                <table>
+                    <tr>
+                        <th>Method</th>
+                        <th>Function</th>
+                    </tr>
+                    <tr>
+                        <td><code class="inline">equals()</code></td>
+                        <td>Exact match (case-sensitive)</td>
+                    </tr>
+                    <tr>
+                        <td><code class="inline">equalsIgnoreCase()</code></td>
+                        <td>Ignore case match</td>
+                    </tr>
+                    <tr>
+                        <td><code class="inline">compareTo()</code></td>
+                        <td>Lexicographic comparison (returns int)</td>
+                    </tr>
+                </table>
+            </div>
+
+<pre><code><span class="str">"abc"</span>.equals(<span class="str">"abc"</span>);   <span class="cmt">// true</span>
+<span class="str">"abc"</span>.compareTo(<span class="str">"abd"</span>); <span class="cmt">// negative integer</span></code></pre>
+
+            <div class="alert alert-important">
+                <strong>Important Rule:</strong><br>
+                <code>==</code> compares memory references. <code>equals()</code> compares the actual string content. Always use <code>equals()</code> for content comparison.
+            </div>
+
+            <div class="problem-box">
+                <div class="problem-title">💡 Practice Problem</div>
+                <p>What is the output of the following code and why?</p>
+<pre><code><span class="typ">String</span> a = <span class="kw">new</span> <span class="typ">String</span>(<span class="str">"test"</span>);
+<span class="typ">String</span> b = <span class="kw">new</span> <span class="typ">String</span>(<span class="str">"test"</span>);
+System.out.println(a == b);
+System.out.println(a.equals(b));</code></pre>
+                <button class="btn-reveal" onclick="toggleSolution('sol-4', this)">Show Answer</button>
+                <div class="solution-box" id="sol-4">
+                    <p>Output:<br><code>false</code><br><code>true</code></p>
+                    <p><strong>Why:</strong> <code>a == b</code> is false because they are different objects in memory (created via the <code>new</code> keyword). <code>a.equals(b)</code> is true because their character sequences are identical.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-5">
+            <h2 class="section-title">5. 🔹 Modification Methods</h2>
+            <div class="table-responsive">
+                <table>
+                    <tr>
+                        <th>Method</th>
+                        <th>Function</th>
+                    </tr>
+                    <tr>
+                        <td><code class="inline">toUpperCase()</code></td>
+                        <td>Converts all characters to uppercase</td>
+                    </tr>
+                    <tr>
+                        <td><code class="inline">toLowerCase()</code></td>
+                        <td>Converts all characters to lowercase</td>
+                    </tr>
+                    <tr>
+                        <td><code class="inline">trim()</code></td>
+                        <td>Removes leading and trailing spaces</td>
+                    </tr>
+                    <tr>
+                        <td><code class="inline">replace()</code></td>
+                        <td>Literal string/character replacement</td>
+                    </tr>
+                    <tr>
+                        <td><code class="inline">replaceAll()</code></td>
+                        <td>Regex-based replacement</td>
+                    </tr>
+                </table>
+            </div>
+
+<pre><code><span class="typ">String</span> s = <span class="str">"  Java  "</span>;
+s.trim();   <span class="cmt">// "Java"</span></code></pre>
+        </section>
+
+        <section id="sec-6">
+            <h2 class="section-title">6. 🔹 Tokenization</h2>
+            <p>Tokenization = splitting a string into parts (tokens).</p>
+            
+            <h3>A. Using split() (Primary Method)</h3>
+            <div class="alert">Key point: <code>split()</code> uses Regular Expressions (Regex).</div>
+<pre><code><span class="typ">String</span> s = <span class="str">"a,b,c"</span>;
+<span class="typ">String</span>[] arr = s.split(<span class="str">","</span>);
+
+<span class="cmt">// Output array contains: ["a", "b", "c"]</span></code></pre>
+
+            <h3>B. Using StringTokenizer (Legacy)</h3>
+<pre><code><span class="kw">import</span> java.util.StringTokenizer;
+
+<span class="typ">String</span> s = <span class="str">"a b c"</span>;
+<span class="typ">StringTokenizer</span> st = <span class="kw">new</span> <span class="typ">StringTokenizer</span>(s);
+
+<span class="kw">while</span> (st.hasMoreTokens()) {
+    System.out.println(st.nextToken());
+}
+
+<span class="cmt">// With explicit delimiter</span>
+<span class="typ">StringTokenizer</span> st2 = <span class="kw">new</span> <span class="typ">StringTokenizer</span>(<span class="str">"a,b,c"</span>, <span class="str">","</span>);</code></pre>
+
+            <h3>Comparison</h3>
+            <div class="table-responsive">
+                <table>
+                    <tr>
+                        <th>Feature</th>
+                        <th>split()</th>
+                        <th>StringTokenizer</th>
+                    </tr>
+                    <tr>
+                        <td>Uses regex</td>
+                        <td>Yes</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>Modern</td>
+                        <td>Yes</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>Flexibility</td>
+                        <td>High</td>
+                        <td>Low</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section id="sec-7">
+            <h2 class="section-title">7. 🔹 Delimiters</h2>
+            <p>A delimiter separates values in a string.</p>
+            
+            <div class="table-responsive">
+                <table>
+                    <tr>
+                        <th>Type</th>
+                        <th>Example</th>
+                    </tr>
+                    <tr>
+                        <td>comma</td>
+                        <td>a,b,c</td>
+                    </tr>
+                    <tr>
+                        <td>space</td>
+                        <td>a b c</td>
+                    </tr>
+                    <tr>
+                        <td>semicolon</td>
+                        <td>a;b;c</td>
+                    </tr>
+                    <tr>
+                        <td>pipe</td>
+                        <td>a|b|c</td>
+                    </tr>
+                    <tr>
+                        <td>multiple spaces</td>
+                        <td>"a   b"</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3>Examples</h3>
+<pre><code><span class="cmt">// Single delimiter</span>
+<span class="typ">String</span> s1 = <span class="str">"a,b,c"</span>;
+s1.split(<span class="str">","</span>);
+
+<span class="cmt">// Multiple delimiters using Regex Character Class []</span>
+<span class="typ">String</span> s2 = <span class="str">"a,b;c|d"</span>;
+<span class="typ">String</span>[] arr2 = s2.split(<span class="str">"[,;|]"</span>);
+
+<span class="cmt">// Multiple spaces</span>
+<span class="typ">String</span> s3 = <span class="str">"Java   Python    C++"</span>;
+<span class="typ">String</span>[] arr3 = s3.split(<span class="str">"\\s+"</span>);</code></pre>
+        </section>
+
+        <section id="sec-8">
+            <h2 class="section-title">8. 🔹 Regex (Regular Expressions)</h2>
+            <p>Regex is a pattern language for matching strings.</p>
+            
+            <h3>Core Symbols</h3>
+            <div class="table-responsive">
+                <table>
+                    <tr><th>Symbol</th><th>Meaning</th></tr>
+                    <tr><td><code class="inline">.</code></td><td>any character</td></tr>
+                    <tr><td><code class="inline">*</code></td><td>0 or more</td></tr>
+                    <tr><td><code class="inline">+</code></td><td>1 or more</td></tr>
+                    <tr><td><code class="inline">?</code></td><td>optional</td></tr>
+                    <tr><td><code class="inline">[]</code></td><td>character set</td></tr>
+                    <tr><td><code class="inline">[^]</code></td><td>negation (not in set)</td></tr>
+                    <tr><td><code class="inline">()</code></td><td>grouping</td></tr>
+                </table>
+            </div>
+
+            <h3>Predefined Classes</h3>
+            <div class="table-responsive">
+                <table>
+                    <tr><th>Regex</th><th>Meaning</th></tr>
+                    <tr><td><code class="inline">\\d</code></td><td>digit</td></tr>
+                    <tr><td><code class="inline">\\D</code></td><td>non-digit</td></tr>
+                    <tr><td><code class="inline">\\s</code></td><td>whitespace</td></tr>
+                    <tr><td><code class="inline">\\S</code></td><td>non-whitespace</td></tr>
+                    <tr><td><code class="inline">\\w</code></td><td>word character</td></tr>
+                    <tr><td><code class="inline">\\W</code></td><td>non-word</td></tr>
+                </table>
+            </div>
+
+            <div class="alert alert-important">
+                <strong>Java Escape Rule:</strong> Backslashes must be doubled in Java Strings.<br>
+                Raw Regex: <code>\d</code> ➡ Java String: <code>"\\d"</code>
+            </div>
+
+            <h3>Usage Examples</h3>
+<pre><code><span class="cmt">// Validation</span>
+<span class="str">"12345"</span>.matches(<span class="str">"\\d+"</span>);  <span class="cmt">// true</span>
+
+<span class="cmt">// Split by digits</span>
+<span class="str">"a1b2c"</span>.split(<span class="str">"\\d"</span>);     <span class="cmt">// ["a", "b", "c"]</span></code></pre>
+        </section>
+
+        <section id="sec-9">
+            <h2 class="section-title">9. 🔹 Replace Operations</h2>
+            <p>Java provides three primary replacement methods:</p>
+
+            <h3>A. replace() (Literal)</h3>
+<pre><code><span class="typ">String</span> s = <span class="str">"java java"</span>;
+s.replace(<span class="str">"java"</span>, <span class="str">"code"</span>); <span class="cmt">// "code code"</span></code></pre>
+
+            <h3>B. replaceAll() (Regex-based)</h3>
+<pre><code><span class="typ">String</span> s = <span class="str">"a1b2c3"</span>;
+s.replaceAll(<span class="str">"\\d"</span>, <span class="str">"#"</span>);  <span class="cmt">// "a#b#c#"</span></code></pre>
+
+            <h3>C. replaceFirst() (Regex-based)</h3>
+<pre><code><span class="typ">String</span> s = <span class="str">"a1b1b1"</span>;
+s.replaceFirst(<span class="str">"1"</span>, <span class="str">"X"</span>);  <span class="cmt">// "aXb1b1"</span></code></pre>
+
+            <h3>Comparison</h3>
+            <div class="table-responsive">
+                <table>
+                    <tr><th>Method</th><th>Uses Regex</th><th>Behavior</th></tr>
+                    <tr><td>replace()</td><td>No</td><td>literal replace all occurrences</td></tr>
+                    <tr><td>replaceAll()</td><td>Yes</td><td>replace all regex matches</td></tr>
+                    <tr><td>replaceFirst()</td><td>Yes</td><td>replace only first regex match</td></tr>
+                </table>
+            </div>
+        </section>
+
+        <section id="sec-10">
+            <h2 class="section-title">10. 🔹 Combined Patterns</h2>
+            
+            <h3>Normalize and Tokenize</h3>
+            <p>A common task is cleaning up messy delimiters before splitting.</p>
+<pre><code><span class="typ">String</span> s = <span class="str">"a,,b;;c|d"</span>;
+
+<span class="cmt">// 1. Replace 1 or more (+) messy delimiters with a standard comma</span>
+s = s.replaceAll(<span class="str">"[,;|]+"</span>, <span class="str">","</span>); 
+
+<span class="cmt">// 2. Split safely</span>
+<span class="typ">String</span>[] arr = s.split(<span class="str">","</span>);</code></pre>
+
+            <h3>Remove Non-Digits (Data Cleaning)</h3>
+<pre><code><span class="typ">String</span> s = <span class="str">"a1b2c3"</span>;
+s = s.replaceAll(<span class="str">"\\D"</span>, <span class="str">""</span>); <span class="cmt">// Remove all non-digits</span>
+
+<span class="cmt">// Result: "123"</span></code></pre>
+
+            <div class="problem-box">
+                <div class="problem-title">💡 Practice Problem</div>
+                <p>You have a phone number formatted as <code>"(555) 123-4567"</code>. Write a single line of code using <code>replaceAll()</code> to strip all non-numeric characters so the result is just <code>"5551234567"</code>.</p>
+                <button class="btn-reveal" onclick="toggleSolution('sol-10', this)">Show Answer</button>
+                <div class="solution-box" id="sol-10">
+<pre><code><span class="typ">String</span> phone = <span class="str">"(555) 123-4567"</span>;
+phone = phone.replaceAll(<span class="str">"\\D"</span>, <span class="str">""</span>);
+System.out.println(phone); <span class="cmt">// Prints "5551234567"</span></code></pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="sec-11">
+            <h2 class="section-title">11. 🔹 Key Takeaways</h2>
+            <ul style="list-style-type: square; margin-left: 20px; line-height: 1.8;">
+                <li><strong>Strings are immutable.</strong> Modification methods return entirely new Strings.</li>
+                <li><strong>Use <code>equals()</code> for comparison</strong>, not <code>==</code>.</li>
+                <li><strong><code>split()</code> is regex-based.</strong> Remember this when splitting by special regex characters.</li>
+                <li><strong><code>\\s+</code></strong> handles multiple unknown spaces efficiently.</li>
+                <li><strong><code>StringTokenizer</code> is legacy.</strong> Prefer <code>split()</code> in modern Java.</li>
+                <li><strong><code>replace()</code> is literal, <code>replaceAll()</code> is regex-based.</strong></li>
+                <li>Regex is essential for parsing and validation tasks.</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <script>
+        // Toggle problem solutions
+        function toggleSolution(id, btn) {
+            const el = document.getElementById(id);
+            if (el.style.display === "block") {
+                el.style.display = "none";
+                btn.textContent = "Show Answer";
+            } else {
+                el.style.display = "block";
+                btn.textContent = "Hide Answer";
+            }
+        }
+
+        // Mobile Menu Logic
+        const menuToggle = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+        const links = navLinks.querySelectorAll('a');
+
+        // Open/Close menu on button click
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+        });
+
+        // Close menu when a link is clicked (crucial for mobile single-page apps)
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    navLinks.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
